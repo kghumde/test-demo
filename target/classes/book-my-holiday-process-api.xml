@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:book-my-holiday="http://www.mulesoft.org/schema/mule/book-my-holiday" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:wsc="http://www.mulesoft.org/schema/mule/wsc"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/wsc http://www.mulesoft.org/schema/mule/wsc/current/mule-wsc.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/book-my-holiday http://www.mulesoft.org/schema/mule/book-my-holiday/current/mule-book-my-holiday.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="666bf77a-6b4a-46fc-a3a2-97f6c57d8267" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<wsc:config name="Web_Service_Consumer_Config" doc:name="Web Service Consumer Config" doc:id="759bf20b-b967-4803-8fc4-ca67467cb79c" >
+		<wsc:connection wsdlLocation="http://hotel-booking-sys-api.us-e2.cloudhub.io/Hotel-Services/Hotel-ServicesSOAP?wsdl" service="Hotel-Services" port="Hotel-ServicesSOAP" address="http://hotel-booking-sys-api.us-e2.cloudhub.io/Hotel-Services/Hotel-ServicesSOAP" >
+			<wsc:web-service-security actor="http://schemas.xmlsoap.org/soap/actor/next" />
+		</wsc:connection>
+	</wsc:config>
+	<book-my-holiday:config name="BookMyHoliday_Config" doc:name="BookMyHoliday Config" doc:id="a7dacc3b-b61f-4870-871e-a62ac61bb667" property_client-id="70cc9d0c032c491b983d2b4f418f288b" property_client-secret="A7729096fDfD412e8037F4425B5B7eA9" property_host="bookmyholiday-flight-api-indigo.us-e2.cloudhub.io" property_port="80" property_basePath="/" />
+	<sub-flow name="bookhotel" doc:id="bcb49feb-f288-44ba-98b8-c17960dd58ed" >
+		<logger level="INFO" doc:name="Start_Flow" doc:id="8a79517b-ff03-4632-b3de-c05480907001" message="Book hotel sub flow started"/>
+		<set-payload value="#[payload]" doc:name="Set Payload" doc:id="65b0bdf0-d755-4659-8b42-fef20ea7d365" />
+		<ee:transform doc:name="Transform Message" doc:id="41cf73d1-2701-4dd8-8d93-2061618eab29">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/xml
+ns ns0 http://www.HotelServices.com/Hotel-Services/
+---
+{
+	ns0#bookHotel: {
+		Name: payload.Name,
+		MobNo: payload.MobNo,
+		CheckIn: payload.CheckIn,
+		CheckOut: payload.CheckOut,
+		Address: payload.Address,
+		HotelName: payload.HotelName,
+		RoomID: payload.RoomID,
+		RoomType: payload.RoomType,
+		HotelID: payload.HotelID
+	}
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<wsc:consume operation="bookHotel" doc:id="cdde5715-2fba-43bc-9a33-fc7b2fc33187" config-ref="Web_Service_Consumer_Config">
+		</wsc:consume>
+		<logger level="INFO" doc:name="Logger" doc:id="514f264e-b8bf-49a8-9fc9-d4c112fede87" message="#[payload]" />
+		<logger level="INFO" doc:name="End_Logger" doc:id="f961c3be-4fb3-441b-9e5b-4b232f383aa7" message="Book hotel sub flow ended"/>
+	</sub-flow>
+	<sub-flow name="getHotelList" doc:id="a8794f7b-3713-4a1d-bb48-e994f9726f82" >
+		<logger level="INFO" doc:name="Start_Logger" doc:id="902de373-66e8-4cf7-820a-88a1cd754bb2" message="Get hotel list sub flow started"/>
+		<set-payload value="#[payload]" doc:name="Set Payload" doc:id="e9cc795e-be36-454a-92f3-ccbacbe17123" />
+		<ee:transform doc:name="Transform Message" doc:id="9f5513ab-a769-4686-8ef5-45b93406318d" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/xml
+ns ns0 http://www.HotelServices.com/Hotel-Services/
+---
+{
+	ns0#getHotelList: {
+		City: payload.city
+	}
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<wsc:consume operation="getHotelList" doc:name="Consume" doc:id="f36fda16-dd22-4193-a078-eca30181dce2" config-ref="Web_Service_Consumer_Config"/>
+		<logger level="INFO" doc:name="Logger" doc:id="9634b1aa-0365-4567-89d9-ee60988112ad" message="#[payload]"/>
+		<logger level="INFO" doc:name="End_Logger" doc:id="d09c62c5-5205-4f58-a5fa-a34352d1eb6e" message="Get hotel list sub flow ended"/>
+	</sub-flow>
+	<sub-flow name="bookingHistory" doc:id="27b30dc1-e71b-48bd-bab9-63c8ae412023" >
+		<logger level="INFO" doc:name="Start_Logger" doc:id="fdeb20ac-140a-4d0d-bd00-290034f015fe" message="Booking History sub flow started"/>
+		<set-payload value="#[payload]" doc:name="Set Payload" doc:id="8e288c1e-9bcd-4cab-8b11-184c835d120f" />
+		<ee:transform doc:name="Transform Message" doc:id="7b9e6170-ead3-4119-87c0-dcb35c343317" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/xml
+ns ns0 http://www.HotelServices.com/Hotel-Services/
+---
+{
+	ns0#bookingHistory: {
+		bookingId: payload.bookingId
+	}
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<wsc:consume doc:name="Consume" doc:id="5de4cd7e-c807-45d3-807e-91f8258b3ffe" config-ref="Web_Service_Consumer_Config" operation="bookingHistory"/>
+		<logger level="INFO" doc:name="Logger" doc:id="27f9bc4e-1d2e-4c5f-a991-53c6131c8352" message="#[payload]"/>
+		<logger level="INFO" doc:name="End_Logger" doc:id="bc0fa329-80a4-47b8-8f3a-306ac2a1bdb1" message="Booking History sub flow ended"/>
+	</sub-flow>
+	<sub-flow name="cancelBooking" doc:id="e823ec27-924b-4cca-b4aa-fbd248d2edfc" >
+		<logger level="INFO" doc:name="Start_Logger" doc:id="d7d18527-d71d-4382-9edc-d3a4d59f0b85" message="Cancel booking sub flow started"/>
+		<set-payload value="#[payload]" doc:name="Set Payload" doc:id="1f8034ad-5418-47ac-a484-68eb3be90f3f" />
+		<ee:transform doc:name="Transform Message" doc:id="a3408999-15ee-4f20-b39e-5c32171deea8" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/xml
+ns ns0 http://www.HotelServices.com/Hotel-Services/
+---
+{
+	ns0#cancelBooking: {
+		bookingId: payload.bookingId
+	}
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<wsc:consume doc:name="Consume" doc:id="0e2f1862-5885-4349-8153-02656d9c64e0" config-ref="Web_Service_Consumer_Config" operation="cancelBooking"/>
+		<logger level="INFO" doc:name="Logger" doc:id="8bfe42c7-d7a7-48b6-9acb-40fdf97f3d5b" message="#[payload]"/>
+		<logger level="INFO" doc:name="End_Logger" doc:id="f49f0a0b-7f8d-422d-8e68-a746adb08e1e" message="Cancel booking sub flow started"/>
+	</sub-flow>
+	<flow name="getIndigoFlights" doc:id="8fd777fe-9cfc-4762-b569-f5599306334f" >
+		<book-my-holiday:get-flights doc:name="Get Flights." doc:id="7a0acf8c-32cd-4fb6-bf8d-c0580d1cc1a2" config-ref="BookMyHoliday_Config" origin="#[attributes.queryParams.origin]" destination="#[attributes.queryParams.destination]" departuredate="#[attributes.queryParams.departuredate]"/>
+		<logger level="INFO" doc:name="Logger" doc:id="4d92217d-f3b3-4824-8810-ac04abff6071" message="#[payload]"/>
+	</flow>
+	<flow name="bookIndigoFlight" doc:id="3f13f6a7-cc03-4e90-80c0-a8158de1a85d" >
+		<book-my-holiday:book-flight doc:name="Book Flight." doc:id="7992b4dd-1261-4267-bb99-03f5abfecf18" config-ref="BookMyHoliday_Config"/>
+		<logger level="INFO" doc:name="Logger" doc:id="d107f026-9f9a-4263-8e80-613a2d602d42" message="#[payload]"/>
+	</flow>
+	<flow name="soap-cloud-consumerFlow1" doc:id="05b08b51-1ae5-4d8e-acd0-8e43d0a416f5" >
+		<http:listener doc:name="Listener" doc:id="b869bc4a-b21e-4d29-a6f4-b913e116e185" config-ref="HTTP_Listener_config" path="/holiday"/>
+		<logger level="INFO" doc:name="Start_Logger" doc:id="f7bd39d6-ffcf-4be0-8806-2dea5555e31d" message="Main Flow of process API started"/>
+		<set-variable value="#[attributes.queryParams.service]" doc:name="Set Variable" doc:id="a0630481-23e1-4e95-8b5d-3f717825b343" variableName="service"/>
+		<choice doc:name="Choice" doc:id="926345c7-4225-47ff-82fe-d6e815d31cad" >
+			<when expression='#[(vars.service == "bookHotel")]'>
+				<flow-ref doc:name="Flow Reference" doc:id="7b90338a-4237-4e22-8e0c-a126ebf6b054" name="bookhotel"/>
+			</when>
+			<when expression='#[(vars.service == "getHotelList")]'>
+				<flow-ref doc:name="Flow Reference" doc:id="2c37703a-73ed-4bb1-a05d-fcbd9b65e862" name="getHotelList"/>
+			</when>
+			<when expression='#[(vars.service == "bookingHistory")]'>
+				<flow-ref doc:name="Flow Reference" doc:id="2322a807-2f52-4f1e-afe4-f1ed56b00998" name="bookingHistory"/>
+			</when>
+			<when expression='#[(vars.service == "cancelBooking")]'>
+				<flow-ref doc:name="Flow Reference" doc:id="cb3a45ce-fc1a-459f-97c2-ecf84528d92b" name="cancelBooking"/>
+			</when>
+			<when expression='#[(vars.service == "getIndigoFlights")]'>
+				<flow-ref doc:name="Flow Reference" doc:id="6f7904b5-c41b-4254-9a40-2d81b84bbdcb" name="getIndigoFlights"/>
+			</when>
+			<when expression='#[(vars.service == "bookIndigoFlight")]'>
+				<flow-ref doc:name="Flow Reference" doc:id="2bf7d703-4102-4f8d-9ff6-e00c3279f4a1" name="bookIndigoFlight"/>
+
+				
+			</when>
+			<otherwise >
+				<ee:transform doc:name="Transform Message" doc:id="05640c22-c86e-49d6-8567-7f0f68a8383d" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"message" : "Invalid Operation"
+}]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+			</otherwise>
+		</choice>
+		<logger level="INFO" doc:name="End_Logger" doc:id="38abfd22-808d-4188-a732-b0bf822f7fc4" message="Main Flow of process API ended"/>
+	</flow>
+</mule>

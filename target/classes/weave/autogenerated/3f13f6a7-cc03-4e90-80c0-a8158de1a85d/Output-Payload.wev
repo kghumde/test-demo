@@ -1,0 +1,18 @@
+%dw 2.0
+
+type auto_3f13f6a7_cc03_4e90_80c0_a8158de1a85d_Output_Payload = {
+  travellerDetails: Array<{    address?: String,     travellerName?: String,     mobileNo?: Number,     seatNo?: Number,     age?: Number,     _?: Any  }>, 
+  totalPrice?: Number, 
+  flightDetails: {
+    code?: String, 
+    origin?: String, 
+    destination?: String, 
+    ID?: Number, 
+    departureDate: String, 
+    _?: Any
+  }, 
+  message?: String, 
+  bookingId: String, 
+  _?: Any
+}
+
