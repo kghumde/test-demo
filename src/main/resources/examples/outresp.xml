@@ -1,0 +1,10 @@
+<hotel>
+	<Hotel_ID>abc</Hotel_ID>
+	<Hotel_Name>abc</Hotel_Name>
+	<City>abc</City>
+	<State>abc</State>
+	<Availability_Status>abc</Availability_Status>
+	<Single_Room_Price>abc</Single_Room_Price>
+	<Double_Room_Price>abc</Double_Room_Price>
+	<Deluex_Room_Price>abc</Deluex_Room_Price>
+</hotel>
