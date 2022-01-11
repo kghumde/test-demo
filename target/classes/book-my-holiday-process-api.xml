@@ -106,12 +106,16 @@ ns ns0 http://www.HotelServices.com/Hotel-Services/
 		<logger level="INFO" doc:name="End_Logger" doc:id="f49f0a0b-7f8d-422d-8e68-a746adb08e1e" message="Cancel booking sub flow started"/>
 	</sub-flow>
 	<flow name="getIndigoFlights" doc:id="8fd777fe-9cfc-4762-b569-f5599306334f" >
+		<logger level="INFO" doc:name="Start_Logger" doc:id="332f847e-e14f-4511-b207-c9c5ffea7755" message="Get Indigo Flights sub flow started"/>
 		<book-my-holiday:get-flights doc:name="Get Flights." doc:id="7a0acf8c-32cd-4fb6-bf8d-c0580d1cc1a2" config-ref="BookMyHoliday_Config" origin="#[attributes.queryParams.origin]" destination="#[attributes.queryParams.destination]" departuredate="#[attributes.queryParams.departuredate]"/>
 		<logger level="INFO" doc:name="Logger" doc:id="4d92217d-f3b3-4824-8810-ac04abff6071" message="#[payload]"/>
+		<logger level="INFO" doc:name="End_Logger" doc:id="1525f6f4-ff6c-4d44-8b0a-cacc4c523ef2" message="Get Indigo Flights sub flow ended"/>
 	</flow>
 	<flow name="bookIndigoFlight" doc:id="3f13f6a7-cc03-4e90-80c0-a8158de1a85d" >
+		<logger level="INFO" doc:name="Start_Logger" doc:id="5bfcaecc-3bcc-45fe-8f48-0fe7d478a158" message="Book Indigo Flight sub flow started"/>
 		<book-my-holiday:book-flight doc:name="Book Flight." doc:id="7992b4dd-1261-4267-bb99-03f5abfecf18" config-ref="BookMyHoliday_Config"/>
 		<logger level="INFO" doc:name="Logger" doc:id="d107f026-9f9a-4263-8e80-613a2d602d42" message="#[payload]"/>
+		<logger level="INFO" doc:name="End_Logger" doc:id="980125e1-c751-4e0c-8707-9e0f2f24ff2b" message="Book Indigo Flight sub flow ended"/>
 	</flow>
 	<flow name="soap-cloud-consumerFlow1" doc:id="05b08b51-1ae5-4d8e-acd0-8e43d0a416f5" >
 		<http:listener doc:name="Listener" doc:id="b869bc4a-b21e-4d29-a6f4-b913e116e185" config-ref="HTTP_Listener_config" path="/holiday"/>
@@ -119,21 +123,30 @@ ns ns0 http://www.HotelServices.com/Hotel-Services/
 		<set-variable value="#[attributes.queryParams.service]" doc:name="Set Variable" doc:id="a0630481-23e1-4e95-8b5d-3f717825b343" variableName="service"/>
 		<choice doc:name="Choice" doc:id="926345c7-4225-47ff-82fe-d6e815d31cad" >
 			<when expression='#[(vars.service == "bookHotel")]'>
+				<logger level="INFO" doc:name="Logger" doc:id="57c89cd6-a780-4c78-93bf-bad67b96cf3b" message='#["Choice Service : " ++ vars.service as String]'/>
 				<flow-ref doc:name="Flow Reference" doc:id="7b90338a-4237-4e22-8e0c-a126ebf6b054" name="bookhotel"/>
 			</when>
 			<when expression='#[(vars.service == "getHotelList")]'>
+				<logger level="INFO" doc:name="Logger" doc:id="da3cf96a-1d6d-4454-b5f5-324b3e0e536f" message='#["Choice Service : " ++ vars.service as String]'/>
 				<flow-ref doc:name="Flow Reference" doc:id="2c37703a-73ed-4bb1-a05d-fcbd9b65e862" name="getHotelList"/>
-			</when>
+			
+</when>
 			<when expression='#[(vars.service == "bookingHistory")]'>
+				<logger level="INFO" doc:name="Logger" doc:id="534ce634-63c2-49f6-989e-fcb4aebb6378" message='#["Choice Service : " ++ vars.service as String]'/>
 				<flow-ref doc:name="Flow Reference" doc:id="2322a807-2f52-4f1e-afe4-f1ed56b00998" name="bookingHistory"/>
-			</when>
+			
+</when>
 			<when expression='#[(vars.service == "cancelBooking")]'>
+				<logger level="INFO" doc:name="Logger" doc:id="06d906ac-26f9-472e-a0f3-d3ec308a8216" message='#["Choice Service : " ++ vars.service as String]'/>
 				<flow-ref doc:name="Flow Reference" doc:id="cb3a45ce-fc1a-459f-97c2-ecf84528d92b" name="cancelBooking"/>
-			</when>
+			
+</when>
 			<when expression='#[(vars.service == "getIndigoFlights")]'>
+				<logger level="INFO" doc:name="Logger" doc:id="3edf7d42-6a6c-424e-a120-541e6534e441" message='#["Choice Service : " ++ vars.service as String]'/>
 				<flow-ref doc:name="Flow Reference" doc:id="6f7904b5-c41b-4254-9a40-2d81b84bbdcb" name="getIndigoFlights"/>
 			</when>
 			<when expression='#[(vars.service == "bookIndigoFlight")]'>
+				<logger level="INFO" doc:name="Logger" doc:id="72846262-81ab-457d-ab61-8adf4476df2a" message='#["Choice Service : " ++ vars.service as String]'/>
 				<flow-ref doc:name="Flow Reference" doc:id="2bf7d703-4102-4f8d-9ff6-e00c3279f4a1" name="bookIndigoFlight"/>
 
 				
