@@ -14,6 +14,7 @@
       "exportedResources": [
         "application-types.xml",
         "book-my-holiday-process-api.xml",
+        "config.yaml",
         "examples/bookhotel.json",
         "examples/bookingId.json",
         "examples/city.json",

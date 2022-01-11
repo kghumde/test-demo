@@ -8,14 +8,15 @@ http://www.mulesoft.org/schema/mule/wsc http://www.mulesoft.org/schema/mule/wsc/
 http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
 http://www.mulesoft.org/schema/mule/book-my-holiday http://www.mulesoft.org/schema/mule/book-my-holiday/current/mule-book-my-holiday.xsd">
 	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="666bf77a-6b4a-46fc-a3a2-97f6c57d8267" >
-		<http:listener-connection host="0.0.0.0" port="8081" />
+		<http:listener-connection host="0.0.0.0" port="${http.port}" />
 	</http:listener-config>
 	<wsc:config name="Web_Service_Consumer_Config" doc:name="Web Service Consumer Config" doc:id="759bf20b-b967-4803-8fc4-ca67467cb79c" >
-		<wsc:connection wsdlLocation="http://hotel-booking-sys-api.us-e2.cloudhub.io/Hotel-Services/Hotel-ServicesSOAP?wsdl" service="Hotel-Services" port="Hotel-ServicesSOAP" address="http://hotel-booking-sys-api.us-e2.cloudhub.io/Hotel-Services/Hotel-ServicesSOAP" >
+		<wsc:connection wsdlLocation="${hotel.wsdl}" service="${hotel.service}" port="${hotel.port}" address="${hotel.address}" >
 			<wsc:web-service-security actor="http://schemas.xmlsoap.org/soap/actor/next" />
 		</wsc:connection>
 	</wsc:config>
-	<book-my-holiday:config name="BookMyHoliday_Config" doc:name="BookMyHoliday Config" doc:id="a7dacc3b-b61f-4870-871e-a62ac61bb667" property_client-id="70cc9d0c032c491b983d2b4f418f288b" property_client-secret="A7729096fDfD412e8037F4425B5B7eA9" property_host="bookmyholiday-flight-api-indigo.us-e2.cloudhub.io" property_port="80" property_basePath="/" />
+	<book-my-holiday:config name="BookMyHoliday_Config" doc:name="BookMyHoliday Config" doc:id="a7dacc3b-b61f-4870-871e-a62ac61bb667" property_client-id="${flight.clientid}" property_client-secret="${flight.clientsecret}" property_host="${flight.host}" property_port="${flight.port}" property_basePath="/" />
+	<configuration-properties doc:name="Configuration properties" doc:id="9ddef37d-bd11-4b0a-b5a6-757f65f589c0" file="config.yaml" />
 	<sub-flow name="bookhotel" doc:id="bcb49feb-f288-44ba-98b8-c17960dd58ed" >
 		<logger level="INFO" doc:name="Start_Flow" doc:id="8a79517b-ff03-4632-b3de-c05480907001" message="Book hotel sub flow started"/>
 		<set-payload value="#[payload]" doc:name="Set Payload" doc:id="65b0bdf0-d755-4659-8b42-fef20ea7d365" />

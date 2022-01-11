@@ -1,0 +1,21 @@
+http : 
+   port : "8081"
+
+db : 
+   host : "sql6.freemysqlhosting.net"
+   port : "3306"
+   user : "sql6460985"
+   password : "zkYTluy5fH"
+   database : "sql6460985"
+   
+hotel : 
+   wsdl : "http://hotel-booking-sys-api.us-e2.cloudhub.io/Hotel-Services/Hotel-ServicesSOAP?wsdl"
+   service : "Hotel-Services"
+   port : "Hotel-ServicesSOAP"
+   address : "http://hotel-booking-sys-api.us-e2.cloudhub.io/Hotel-Services/Hotel-ServicesSOAP"
+
+flight :
+   clientid : "70cc9d0c032c491b983d2b4f418f288b"
+   clientsecret : "A7729096fDfD412e8037F4425B5B7eA9"
+   host : "bookmyholiday-flight-api-indigo.us-e2.cloudhub.io"
+   port : "80"      
